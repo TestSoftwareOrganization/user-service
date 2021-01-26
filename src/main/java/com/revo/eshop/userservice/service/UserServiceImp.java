@@ -3,10 +3,8 @@ package com.revo.eshop.userservice.service;
 import com.revo.eshop.userservice.data.UserEntity;
 import com.revo.eshop.userservice.repositories.UsersRepository;
 import com.revo.eshop.userservice.shared.UserDto;
-import org.h2.engine.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,8 @@ public class UserServiceImp implements UsersService{
         UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
         userEntity.setEncryptedPassword("test");
         usersRepository.save(userEntity);
+        UserDto returnedValue = modelMapper.map(userEntity,UserDto.class);
 
-        return null;
+        return returnedValue;
     }
 }
