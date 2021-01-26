@@ -1,6 +1,5 @@
-package com.revo.eshop.userservice.ui.models;
+package com.revo.eshop.userservice.ui.model;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
