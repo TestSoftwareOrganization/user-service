@@ -30,15 +30,15 @@ public class UsersController {
         return "working on " + env.getProperty("local.server.port");
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody CreateUserRequestModel userDetails) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
         UserDto userDto = modelMapper.map(userDetails, UserDto.class);
         usersService.createUser(userDto);
 
-        CreateUserResponseModel responseModel = modelMapper.map(userDto,CreateUserResponseModel.class);
+        CreateUserResponseModel responseModel = modelMapper.map(userDto, CreateUserResponseModel.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseModel);
     }
