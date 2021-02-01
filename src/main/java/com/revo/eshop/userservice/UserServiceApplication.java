@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class UserServiceApplication {
 
     public static void main(String[] args) {
-        System.out.println("MASTER BRANCH");
         SpringApplication.run(UserServiceApplication.class, args);
     }
 
