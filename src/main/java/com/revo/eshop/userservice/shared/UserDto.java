@@ -2,6 +2,7 @@ package com.revo.eshop.userservice.shared;
 
 import java.io.Serializable;
 
+//Data transfer object
 public class UserDto implements Serializable {
     private static final long serialVersionUID = -1717174613431342248L;
     private String userId;
