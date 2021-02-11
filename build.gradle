@@ -31,6 +31,7 @@ dependencies {
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-config'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-bus-amqp'
 
 
 
