@@ -1,4 +1,4 @@
-package com.revo.eshop.userservice.ui.model;
+package com.revo.eshop.userservice.ui.model.users.create;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

@@ -1,19 +1,14 @@
-package com.revo.eshop.userservice.shared;
+package com.revo.eshop.userservice.ui.model.users.get;
 
 import com.revo.eshop.userservice.ui.model.orders.OrdersResponseModel;
 
-import java.io.Serializable;
 import java.util.List;
 
-//Data transfer object
-public class UserDto implements Serializable {
-    private static final long serialVersionUID = -1717174613431342248L;
+public class UserResponseModel {
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
-    private String encryptedPassword;
     private List<OrdersResponseModel> orders;
 
     public String getUserId() {
@@ -46,22 +41,6 @@ public class UserDto implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEncryptedPassword() {
-        return encryptedPassword;
-    }
-
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
     }
 
     public List<OrdersResponseModel> getOrders() {

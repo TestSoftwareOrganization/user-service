@@ -1,4 +1,4 @@
-package com.revo.eshop.userservice.ui.model;
+package com.revo.eshop.userservice.ui.model.users;
 
 public class LoginRequestModel {
     private String email;

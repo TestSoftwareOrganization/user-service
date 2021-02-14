@@ -1,14 +1,11 @@
 package com.revo.eshop.userservice.security;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revo.eshop.userservice.service.UsersService;
 import com.revo.eshop.userservice.shared.UserDto;
-import com.revo.eshop.userservice.ui.model.LoginRequestModel;
+import com.revo.eshop.userservice.ui.model.users.LoginRequestModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
