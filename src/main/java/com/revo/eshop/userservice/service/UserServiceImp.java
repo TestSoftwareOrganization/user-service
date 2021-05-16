@@ -5,8 +5,9 @@ import com.revo.eshop.userservice.repositories.UsersRepository;
 import com.revo.eshop.userservice.serviceClients.OrdersServiceClient;
 import com.revo.eshop.userservice.shared.UserDto;
 import com.revo.eshop.userservice.ui.model.orders.OrdersResponseModel;
+//import feign.FeignException;
+//import feign.RetryableException;
 import feign.FeignException;
-import feign.RetryableException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
@@ -36,7 +37,18 @@ public class UserServiceImp implements UsersService {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     //Constructor based dependency injection
-    @Autowired
+//    @Autowired
+//    public UserServiceImp(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
+//        this.usersRepository = usersRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.environment = environment;
+//    }
+
+    //Constructor based dependency injection
+
+
+    // BACKUP
+        @Autowired
     public UserServiceImp(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, OrdersServiceClient ordersServiceClient, Environment environment) {
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;

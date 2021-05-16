@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "orders-ws")
+@FeignClient(value = "orders",url = "http://192.168.49.2:31064")
 @Component
 public interface OrdersServiceClient {
 

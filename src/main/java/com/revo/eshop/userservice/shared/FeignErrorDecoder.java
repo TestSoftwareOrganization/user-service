@@ -11,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 public class FeignErrorDecoder implements ErrorDecoder {
 
+//    public class FeignErrorDecoder {
+
     Environment environment;
 
     @Autowired
