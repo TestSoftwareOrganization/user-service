@@ -1,5 +1,6 @@
 package com.revo.eshop.userservice.controllers;
 
+import com.revo.eshop.userservice.exception.ExceptionHandling;
 import com.revo.eshop.userservice.service.UsersService;
 import com.revo.eshop.userservice.shared.UserDto;
 import com.revo.eshop.userservice.ui.model.users.create.CreateUserRequestModel;
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
-public class UsersController {
+@RequestMapping(path = { "/", "/users"})
+public class UsersController extends ExceptionHandling {
 
     @Autowired
     private Environment env;

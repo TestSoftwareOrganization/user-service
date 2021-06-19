@@ -3,10 +3,10 @@ package com.revo.eshop.userservice;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class UserServiceApplicationTests {
 
-    @Test
+//    @Test
     void contextLoads() {
     }
 

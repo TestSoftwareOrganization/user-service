@@ -1,9 +1,6 @@
 package com.revo.eshop.userservice.shared;
 
-import com.revo.eshop.userservice.ui.model.orders.OrdersResponseModel;
-
 import java.io.Serializable;
-import java.util.List;
 
 //Data transfer object
 public class UserDto implements Serializable {
@@ -14,7 +11,6 @@ public class UserDto implements Serializable {
     private String email;
     private String password;
     private String encryptedPassword;
-    private List<OrdersResponseModel> orders;
 
     public String getUserId() {
         return userId;
@@ -62,13 +58,5 @@ public class UserDto implements Serializable {
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
-    }
-
-    public List<OrdersResponseModel> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<OrdersResponseModel> orders) {
-        this.orders = orders;
     }
 }

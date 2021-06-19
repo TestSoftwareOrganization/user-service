@@ -1,58 +1,40 @@
 package com.revo.eshop.userservice.service;
 
-import com.revo.eshop.userservice.data.UserEntity;
-import com.revo.eshop.userservice.repositories.UsersRepository;
-import com.revo.eshop.userservice.serviceClients.OrdersServiceClient;
+import com.revo.eshop.userservice.domain.User;
+import com.revo.eshop.userservice.domain.UserPrincipal;
+import com.revo.eshop.userservice.repositories.UserRepository;
 import com.revo.eshop.userservice.shared.UserDto;
-import com.revo.eshop.userservice.ui.model.orders.OrdersResponseModel;
-//import feign.FeignException;
-//import feign.RetryableException;
-import feign.FeignException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
+import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Transactional
+//@Qualifier("userDetailsService")
 public class UserServiceImp implements UsersService {
 
-    UsersRepository usersRepository;
+    UserRepository usersRepository;
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    OrdersServiceClient ordersServiceClient;
 
     Environment environment;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //Constructor based dependency injection
-//    @Autowired
-//    public UserServiceImp(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
-//        this.usersRepository = usersRepository;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-//        this.environment = environment;
-//    }
-
-    //Constructor based dependency injection
-
-
-    // BACKUP
-        @Autowired
-    public UserServiceImp(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, OrdersServiceClient ordersServiceClient, Environment environment) {
+    @Autowired
+    public UserServiceImp(UserRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.ordersServiceClient = ordersServiceClient;
         this.environment = environment;
     }
 
@@ -61,7 +43,7 @@ public class UserServiceImp implements UsersService {
         userDetails.setUserId(UUID.randomUUID().toString());
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+        User userEntity = modelMapper.map(userDetails, User.class);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
         usersRepository.save(userEntity);
         UserDto returnedValue = modelMapper.map(userEntity, UserDto.class);
@@ -71,17 +53,25 @@ public class UserServiceImp implements UsersService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = usersRepository.findByEmail(username);
-        if (userEntity == null) throw new UsernameNotFoundException(username);
+        User userEntity = usersRepository.findByUsername(username);
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(),
-                true, true, true, true,
-                new ArrayList<>());
+        if (userEntity == null) {
+            logger.error("User not found - " + username);
+            throw new UsernameNotFoundException(username);
+        } else {
+            userEntity.setLastLoginDateDisplay(userEntity.getLastLoginDate());
+            userEntity.setLastLoginDate(new Date());
+            usersRepository.save(userEntity);
+            UserPrincipal userPrincipal = new UserPrincipal(userEntity);
+            logger.info("User " + username + " is found.");
+
+            return userPrincipal;
+        }
     }
 
     @Override
     public UserDto getUserDetailsByEmail(String email) {
-        UserEntity userEntity = usersRepository.findByEmail(email);
+        User userEntity = usersRepository.findByEmail(email);
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
         return new ModelMapper().map(userEntity, UserDto.class);
@@ -89,22 +79,10 @@ public class UserServiceImp implements UsersService {
 
     @Override
     public UserDto getUserByUserId(String userId) {
-        UserEntity userEntity = usersRepository.findByUserId(userId);
+        User userEntity = usersRepository.findByUserId(userId);
         if (userEntity == null) throw new UsernameNotFoundException("User not found");
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
-        List<OrdersResponseModel> ordersList = new ArrayList<>();
-
-        logger.info("Before calling Orders Microservice...");
-        try {
-            ordersList = ordersServiceClient.getOrdersByUserId(userId);
-        }catch (FeignException e){
-            logger.info(e.getLocalizedMessage());
-        }
-
-        logger.info("After calling Orders Microservice...");
-        userDto.setOrders(ordersList);
-
         return userDto;
     }
 }

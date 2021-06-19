@@ -1,15 +1,10 @@
 package com.revo.eshop.userservice.ui.model.users.get;
 
-import com.revo.eshop.userservice.ui.model.orders.OrdersResponseModel;
-
-import java.util.List;
-
 public class UserResponseModel {
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
-    private List<OrdersResponseModel> orders;
 
     public String getUserId() {
         return userId;
@@ -41,13 +36,5 @@ public class UserResponseModel {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<OrdersResponseModel> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<OrdersResponseModel> orders) {
-        this.orders = orders;
     }
 }
