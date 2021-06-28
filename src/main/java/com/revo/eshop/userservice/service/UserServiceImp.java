@@ -1,7 +1,11 @@
 package com.revo.eshop.userservice.service;
 
 import com.revo.eshop.userservice.domain.User;
+import com.revo.eshop.userservice.enumeration.Role;
 import com.revo.eshop.userservice.domain.UserPrincipal;
+import com.revo.eshop.userservice.exception.domain.EmailExistException;
+import com.revo.eshop.userservice.exception.domain.UserNotFoundException;
+import com.revo.eshop.userservice.exception.domain.UsernameExistException;
 import com.revo.eshop.userservice.repositories.UserRepository;
 import com.revo.eshop.userservice.shared.UserDto;
 import org.modelmapper.ModelMapper;
@@ -14,9 +18,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.UUID;
+
+import static com.revo.eshop.userservice.constants.UserImplConstant.*;
+import static com.revo.eshop.userservice.enumeration.Role.ROLE_USER;
 
 @Service
 @Transactional
@@ -39,15 +47,21 @@ public class UserServiceImp implements UsersService {
     }
 
     @Override
-    public UserDto createUser(UserDto userDetails) {
+    public UserDto register(UserDto userDetails) throws UserNotFoundException, EmailExistException, UsernameExistException {
+        validateNewUsernameAndEmail(null, userDetails.getUsername(), userDetails.getEmail());
         userDetails.setUserId(UUID.randomUUID().toString());
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         User userEntity = modelMapper.map(userDetails, User.class);
+        userEntity.setJoinDate(new Date());
+        userEntity.setActive(true);
+        userEntity.setNotLocked(true);
+        userEntity.setRole(ROLE_USER.name());
+        userEntity.setAuthorities(ROLE_USER.getAuthorities());
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
         usersRepository.save(userEntity);
         UserDto returnedValue = modelMapper.map(userEntity, UserDto.class);
-
+        logger.info("New user was registered: " + returnedValue.getUsername() + " with email: " + returnedValue.getEmail());
         return returnedValue;
     }
 
@@ -85,4 +99,43 @@ public class UserServiceImp implements UsersService {
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
         return userDto;
     }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return usersRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        return usersRepository.findByUsername(username);
+    }
+
+    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
+
+        User userByNewUsername = findUserByUsername(newUsername);
+        User userByNewEmail = findUserByEmail(newEmail);
+        if (currentUsername != null) {
+            User currentUser = findUserByUsername(currentUsername);
+            if (currentUser == null) {
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+            }
+
+            if (userByNewUsername != null && currentUser.getId() != userByNewUsername.getId()) {
+                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+            }
+            if (userByNewEmail != null && currentUser.getId() != userByNewEmail.getId()) {
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+            return currentUser;
+        } else {
+            if (userByNewUsername != null) {
+                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+            }
+            if (userByNewEmail != null) {
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+            return null;
+        }
+    }
+
 }

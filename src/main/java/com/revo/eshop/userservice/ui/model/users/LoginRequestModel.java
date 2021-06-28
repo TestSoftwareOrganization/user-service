@@ -1,15 +1,15 @@
 package com.revo.eshop.userservice.ui.model.users;
 
 public class LoginRequestModel {
-    private String email;
+    private String username;
     private String password;
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
